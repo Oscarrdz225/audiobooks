@@ -1,17 +1,32 @@
 {
+  "id": "/",
   "name": "Mis Audiolibros",
   "short_name": "Audiolibros",
+  "description": "Convierte tus PDFs en audiolibros, organizados por capítulos y con tu progreso siempre guardado.",
   "start_url": ".",
   "scope": ".",
   "display": "standalone",
+  "orientation": "portrait-primary",
   "background_color": "#15131F",
   "theme_color": "#3A2FE0",
   "icons": [
     {
+      "src": "icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
       "src": "icon.svg",
       "sizes": "any",
       "type": "image/svg+xml",
-      "purpose": "any maskable"
+      "purpose": "maskable"
     }
   ]
 }
