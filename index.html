@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#3A2FE0">
+<title>Mis Audiolibros</title>
+<link rel="manifest" href="manifest.json">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 192 192'%3E%3Crect width='192' height='192' rx='40' fill='%233A2FE0'/%3E%3Ctext x='96' y='128' font-size='90' text-anchor='middle'%3E%F0%9F%8E%A7%3C/text%3E%3C/svg%3E">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&family=Inter:wght@400;500;600&display=swap">
+<style>
+:root{
+  --bg:#F4F2F8; --surface:#FFFFFF; --ink:#19172B; --ink-soft:#6B6786;
+  --accent:#3A2FE0; --accent2:#FF8A1E; --line:#DFDAEE; --danger:#D6432F;
+  color-scheme: light dark;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#15131F; --surface:#1E1B2E; --ink:#EEEBF7; --ink-soft:#948FB3;
+    --accent:#8C7CFF; --accent2:#FFB357; --line:#332D4C; --danger:#FF8A78;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#15131F; --surface:#1E1B2E; --ink:#EEEBF7; --ink-soft:#948FB3;
+  --accent:#8C7CFF; --accent2:#FFB357; --line:#332D4C; --danger:#FF8A78;
+}
+*{box-sizing:border-box;}
+html{scroll-padding-top:env(safe-area-inset-top,0px);}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:10;background:var(--bg);}
+body{
+  margin:0; background:var(--bg); color:var(--ink);
+  font-family:'Inter',-apple-system,sans-serif;
+  padding-top:env(safe-area-inset-top,0px);
+  padding-bottom:env(safe-area-inset-bottom,0px);
+  min-height:100%;
+}
+header{
+  padding:28px 20px 16px; display:flex; align-items:center; gap:12px;
+  position:sticky; top:env(safe-area-inset-top,0px); background:var(--bg); z-index:5;
+}
+header .mark{width:38px;height:38px;border-radius:11px;background:linear-gradient(135deg,var(--accent),var(--accent2));flex:none;
+  display:flex;align-items:center;justify-content:center;font-size:1.1rem;}
+header h1{font-family:'Space Grotesk',sans-serif; font-size:1.25rem; margin:0; font-weight:700; letter-spacing:-0.01em;}
+header span{color:var(--ink-soft); font-size:.78rem; display:block; margin-top:1px;}
+main{max-width:720px; margin:0 auto; padding:4px 16px 32px;}
+.panel{background:var(--surface); border:1px solid var(--line); border-radius:18px; padding:18px; margin-bottom:16px;}
+.row{display:flex; gap:10px; align-items:center; flex-wrap:wrap;}
+button{
+  font-family:'Inter',sans-serif; font-weight:600; font-size:.88rem; border:1px solid var(--line);
+  background:var(--surface); color:var(--ink); padding:10px 16px; border-radius:100px;
+  cursor:pointer;
+}
+button.primary{background:var(--accent); color:#fff; border-color:var(--accent);}
+button:active{transform:scale(.96);}
+input[type=file]{font-size:.82rem; color:var(--ink-soft); max-width:100%;}
+#library{display:grid; gap:10px;}
+.book{
+  display:flex; justify-content:space-between; align-items:center; gap:10px;
+  padding:14px; border-radius:14px; background:var(--bg); border:1px solid var(--line);
+}
+.book-cover{width:40px;height:40px;border-radius:9px;background:linear-gradient(160deg,var(--accent),var(--accent2));
+  flex:none; display:flex; align-items:center; justify-content:center; font-family:'Space Grotesk',sans-serif; color:#fff; font-weight:700;}
+.book-title{font-family:'Space Grotesk',sans-serif; font-weight:700; font-size:.98rem;}
+.book-meta{font-size:.76rem; color:var(--ink-soft); margin-top:2px;}
+.empty{color:var(--ink-soft); font-size:.88rem; padding:10px 4px;}
+#player{display:none;}
+#player h2{font-family:'Space Grotesk',sans-serif; margin:10px 0 2px; font-size:1.3rem; font-weight:700;}
+#chapterList{max-height:150px; overflow-y:auto; border:1px solid var(--line); border-radius:12px; margin:12px 0;}
+.chap{
+  padding:10px 12px; font-size:.86rem; cursor:pointer; border-bottom:1px solid var(--line);
+}
+.chap:last-child{border-bottom:none;}
+.chap.active{background:var(--accent); color:#fff; font-weight:600;}
+.controls{display:flex; gap:8px; margin-top:14px; align-items:center; flex-wrap:wrap;}
+#playBtn{padding:12px 22px; font-size:.95rem;}
+.slider-row{display:flex; align-items:center; gap:10px; font-size:.78rem; color:var(--ink-soft); margin-top:12px;}
+input[type=range]{flex:1; accent-color:var(--accent);}
+select{font-size:.84rem; padding:7px 10px; border-radius:100px; border:1px solid var(--line); background:var(--surface); color:var(--ink);}
+#status{font-size:.78rem; color:var(--accent2); margin-top:10px; min-height:1.2em; font-weight:600;}
+.linklike{background:none; border:none; color:var(--accent); font-weight:600; padding:4px 0; border-radius:0;}
+</style>
+</head>
+<body>
+<header><div class="mark">🎧</div><div><h1>Audiolibros</h1><span>PDF → voz, con capítulos y progreso guardado</span></div></header>
+<main>
+
+  <div class="panel" id="player">
+    <button class="linklike" onclick="closePlayer()">&larr; Volver a la biblioteca</button>
+    <h2 id="pTitle"></h2>
+    <div id="chapterList"></div>
+    <div class="controls">
+      <button class="primary" id="playBtn" onclick="togglePlay()">▶ Reproducir</button>
+      <button onclick="skipChapter(-1)">⏮ Capítulo anterior</button>
+      <button onclick="skipChapter(1)">Capítulo siguiente ⏭</button>
+    </div>
+    <div class="slider-row">
+      Velocidad <input type="range" id="rate" min="0.6" max="1.8" step="0.1" value="1" oninput="onRateChange()"><span id="rateVal">1.0x</span>
+    </div>
+    <div class="slider-row">
+      Voz <select id="voiceSel"></select>
+    </div>
+    <div id="status"></div>
+  </div>
+
+  <div class="panel" id="libraryPanel">
+    <div class="row">
+      <input type="file" id="fileInput" accept="application/pdf">
+      <button class="primary" onclick="handleUpload()">Agregar PDF</button>
+    </div>
+    <div id="uploadStatus" class="empty"></div>
+  </div>
+
+  <div class="panel">
+    <div id="library"></div>
+  </div>
+
+</main>
+
+<script>
+pdfjsLib.GlobalWorkerOptions.workerSrc = "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js";
+
+let DB = {};
+try { DB = JSON.parse(localStorage.getItem('audiolibros_db') || '{}'); } catch(e){ DB = {}; }
+function saveDB(){ try{ localStorage.setItem('audiolibros_db', JSON.stringify(DB)); }catch(e){} }
+
+let current = null;      // currently open book id
+let sentences = [];      // sentences of the active chapter
+let sentIdx = 0;
+let speaking = false;
+let voices = [];
+
+function renderLibrary(){
+  const el = document.getElementById('library');
+  const ids = Object.keys(DB);
+  if(ids.length === 0){ el.innerHTML = '<div class="empty">Aún no agregaste ningún PDF. Usa el botón de arriba.</div>'; return; }
+  el.innerHTML = ids.map(id=>{
+    const b = DB[id];
+    const prog = `Cap. ${b.pos.chapter+1} de ${b.chapters.length}`;
+    return `<div class="book">
+      <div class="row" style="flex-wrap:nowrap;">
+        <div class="book-cover">${b.title.charAt(0).toUpperCase()}</div>
+        <div>
+          <div class="book-title">${b.title}</div>
+          <div class="book-meta">${prog} · agregado ${b.added}</div>
+        </div>
+      </div>
+      <div class="row">
+        <button onclick="openBook('${id}')">Abrir</button>
+        <button onclick="deleteBook('${id}')">🗑</button>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+async function handleUpload(){
+  const input = document.getElementById('fileInput');
+  const status = document.getElementById('uploadStatus');
+  if(!input.files.length){ status.textContent = 'Elegí un archivo PDF primero.'; return; }
+  const file = input.files[0];
+  status.textContent = 'Leyendo el PDF...';
+  try{
+    const buf = await file.arrayBuffer();
+    const pdf = await pdfjsLib.getDocument({data: buf}).promise;
+    let fullText = '';
+    for(let p=1; p<=pdf.numPages; p++){
+      status.textContent = `Extrayendo texto (página ${p}/${pdf.numPages})...`;
+      const page = await pdf.getPage(p);
+      const content = await page.getTextContent();
+      const pageText = content.items.map(i=>i.str).join(' ');
+      fullText += pageText + '\n\n';
+    }
+    const chapters = splitIntoChapters(fullText);
+    const id = 'b' + Date.now();
+    DB[id] = {
+      title: file.name.replace(/\.pdf$/i,''),
+      added: new Date().toLocaleDateString(),
+      chapters: chapters,
+      pos: {chapter:0, sentence:0}
+    };
+    saveDB();
+    renderLibrary();
+    status.textContent = `Listo: "${DB[id].title}" agregado con ${chapters.length} capítulo(s).`;
+    input.value = '';
+  }catch(err){
+    status.textContent = 'No se pudo leer ese PDF: ' + err.message;
+  }
+}
+
+function splitIntoChapters(text){
+  const re = /(cap[ií]tulo\s+\d+|chapter\s+\d+)/gi;
+  const matches = [...text.matchAll(re)];
+  if(matches.length < 2){
+    // No clear chapter markers: split evenly into blocks of ~6000 chars
+    const blocks = [];
+    const size = 6000;
+    for(let i=0;i<text.length;i+=size) blocks.push(text.slice(i,i+size).trim());
+    return blocks.filter(b=>b.length>0).map((b,i)=>({label:'Parte '+(i+1), text:b}));
+  }
+  const chaps = [];
+  for(let i=0;i<matches.length;i++){
+    const start = matches[i].index;
+    const end = (i+1<matches.length) ? matches[i+1].index : text.length;
+    chaps.push({label: matches[i][0], text: text.slice(start,end).trim()});
+  }
+  return chaps;
+}
+
+function deleteBook(id){
+  if(!confirm('¿Eliminar este audiolibro de la biblioteca?')) return;
+  delete DB[id]; saveDB(); renderLibrary();
+}
+
+function openBook(id){
+  current = id;
+  const b = DB[id];
+  document.getElementById('pTitle').textContent = b.title;
+  document.getElementById('player').style.display='block';
+  document.getElementById('libraryPanel').style.display='none';
+  renderChapterList();
+  loadChapter(b.pos.chapter, b.pos.sentence);
+  window.scrollTo(0,0);
+}
+function closePlayer(){
+  stopSpeaking();
+  document.getElementById('player').style.display='none';
+  document.getElementById('libraryPanel').style.display='block';
+  renderLibrary();
+}
+
+function renderChapterList(){
+  const b = DB[current];
+  const el = document.getElementById('chapterList');
+  el.innerHTML = b.chapters.map((c,i)=>
+    `<div class="chap ${i===b.pos.chapter?'active':''}" onclick="loadChapter(${i},0)">${i+1}. ${c.label}</div>`
+  ).join('');
+}
+
+function loadChapter(chapIdx, sentenceIdx){
+  stopSpeaking();
+  const b = DB[current];
+  chapIdx = Math.max(0, Math.min(chapIdx, b.chapters.length-1));
+  b.pos.chapter = chapIdx; b.pos.sentence = sentenceIdx || 0;
+  saveDB();
+  sentences = b.chapters[chapIdx].text.match(/[^.!?\n]+[.!?\n]*/g) || [b.chapters[chapIdx].text];
+  sentIdx = b.pos.sentence;
+  renderChapterList();
+  document.getElementById('status').textContent = `Capítulo ${chapIdx+1} de ${b.chapters.length} · listo para reproducir.`;
+}
+
+function skipChapter(delta){
+  const b = DB[current];
+  loadChapter(b.pos.chapter + delta, 0);
+}
+
+function togglePlay(){
+  if(speaking){ pauseSpeaking(); } else { startSpeaking(); }
+}
+
+function startSpeaking(){
+  speaking = true;
+  document.getElementById('playBtn').textContent = '⏸ Pausar';
+  speakNext();
+}
+function pauseSpeaking(){
+  speaking = false;
+  speechSynthesis.cancel();
+  document.getElementById('playBtn').textContent = '▶ Reproducir';
+}
+function stopSpeaking(){
+  speaking = false;
+  speechSynthesis.cancel();
+  const btn = document.getElementById('playBtn');
+  if(btn) btn.textContent = '▶ Reproducir';
+}
+
+function speakNext(){
+  if(!speaking) return;
+  const b = DB[current];
+  if(sentIdx >= sentences.length){
+    // chapter finished -> advance
+    if(b.pos.chapter < b.chapters.length-1){
+      loadChapter(b.pos.chapter+1, 0);
+      speaking = true;
+      speakNext();
+    } else {
+      stopSpeaking();
+      document.getElementById('status').textContent = '🎉 Terminaste el audiolibro.';
+    }
+    return;
+  }
+  const utter = new SpeechSynthesisUtterance(sentences[sentIdx]);
+  utter.rate = parseFloat(document.getElementById('rate').value);
+  const sel = document.getElementById('voiceSel').value;
+  const v = voices.find(v=>v.name===sel);
+  if(v) utter.voice = v;
+  utter.onend = ()=>{
+    sentIdx++;
+    b.pos.sentence = sentIdx;
+    saveDB();
+    document.getElementById('status').textContent = `Reproduciendo · oración ${sentIdx}/${sentences.length}`;
+    if(speaking) speakNext();
+  };
+  utter.onerror = ()=>{ if(speaking){ sentIdx++; speakNext(); } };
+  speechSynthesis.speak(utter);
+}
+
+function onRateChange(){
+  document.getElementById('rateVal').textContent = parseFloat(document.getElementById('rate').value).toFixed(1)+'x';
+}
+
+function loadVoices(){
+  voices = speechSynthesis.getVoices();
+  const sel = document.getElementById('voiceSel');
+  const esVoices = voices.filter(v=>v.lang.startsWith('es'));
+  const list = esVoices.length ? esVoices : voices;
+  sel.innerHTML = list.map(v=>`<option value="${v.name}">${v.name} (${v.lang})</option>`).join('');
+}
+speechSynthesis.onvoiceschanged = loadVoices;
+loadVoices();
+
+renderLibrary();
+
+if('serviceWorker' in navigator){
+  navigator.serviceWorker.register('sw.js').catch(()=>{});
+}
+</script>
+</body>
+</html>

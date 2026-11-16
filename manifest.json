@@ -1,0 +1,17 @@
+{
+  "name": "Mis Audiolibros",
+  "short_name": "Audiolibros",
+  "start_url": ".",
+  "scope": ".",
+  "display": "standalone",
+  "background_color": "#15131F",
+  "theme_color": "#3A2FE0",
+  "icons": [
+    {
+      "src": "icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}
